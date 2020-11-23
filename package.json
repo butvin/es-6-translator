@@ -2,7 +2,7 @@
   "name": "es-6-translator",
   "version": "0.0.1",
   "description": "The Translator js class",
-  "main": "index.js",
+  "main": "index.html",
   "scripts": {
     "test": "testTranslate"
   },
