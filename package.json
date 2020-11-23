@@ -18,7 +18,5 @@
   ],
   "author": "butvin sergey",
   "license": "MIT",
-  "devDependencies": {
-    "@babel/polyfill": "^7.6.0"
-  }
+  "devDependencies": {}
 }
