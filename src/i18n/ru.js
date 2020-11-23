@@ -1,8 +1,4 @@
-export const RU = {
+export default {
   "key": "ru",
-  "description": "Russian language",
-  "source" : {
-    // "Привет": "Привет",
-    // "день": "день"
-  }
+  "description": "Russian language"
 }

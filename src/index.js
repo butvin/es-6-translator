@@ -1,27 +1,31 @@
 'use strict'
-import Translate from './translator.js'
+import Translate from './Translate.js'
 
 const options = {
     defaultLang: 'ru',
     languages: ['ru', 'ukr'],
     localStorage: true,
     autoDetectLang: false,
-    filesLocation: '/i18n/',
+    filesLocation: 'src/i18n',
 }
 
 const translator = new Translate(options)
-
-import { RU } from './i18n/ru.js'
-// import * as UKR from './i18n/ukr.js'
-
-const rusData = RU
-console.log(rusData)
-//
-// const ukrData = UKR.default
-// console.log(ukrData)
-
-
+const documentLang = translator._getDocumentLang()
 console.log(translator)
+console.log(documentLang)
+
+
+import * as ru from './i18n/ru.js'
+import * as ukr from './i18n/ukr.js'
+
+const rusData = ru.default
+const ukrData = ukr.default
+console.log('manualLoaded::rusData', rusData)
+console.log('manualLoaded::ukrData', ukrData)
+console.log()
+
+console.log(navigator.languages)
+console.log(navigator)
 
 // translator.setLang('ukr')
 // console.log(translator.getLang())

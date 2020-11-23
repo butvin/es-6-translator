@@ -1,8 +1,9 @@
 {
   "name": "es-6-translator",
   "version": "0.0.1",
+  "type": "module",
   "description": "The Translator package",
-  "main": "index.html",
+  "main": "index.js",
   "scripts": {
     "test": "testTranslate"
   },
@@ -18,10 +19,6 @@
   "author": "butvin sergey",
   "license": "MIT",
   "devDependencies": {
-    "@babel/polyfill": "^7.6.0",
-    "apollo-link-error": "^1.1.12",
-    "apollo-link-http": "^1.5.16",
-    "apollo-server": "^2.9.6",
-    "babel-preset-es2015": "^6.24.1"
+    "@babel/polyfill": "^7.6.0"
   }
 }

@@ -1,16 +1,13 @@
-"use strict";
-
-export default class Translate {
+class Translate {
     /**
      * Translators constructor
      *
      * @param options
      */
     constructor (options = {}) {
-        this._cache = new Map();
-
         if (options instanceof Object) {
             this._options = Object.assign({}, this.defaultConfig, options)
+            this._cache = new Map()
 
             if (this._options.autoDetectLang) {
                 this._lang = this._options.detectLang()
@@ -41,6 +38,33 @@ export default class Translate {
             navigator.languages[0] : navigator.language;
 
         return language.slice(0, 2)
+    }
+
+    _detectDocumentLang() {
+        const language = document.documentElement.lang
+
+        switch (language) {
+            case 'ru':
+                console.log(language)
+            break
+
+            case 'ukr':
+                console.log(language)
+            break
+
+            case 'en':
+                console.log(language)
+            break
+
+            default:
+                console.log(language)
+            break
+        }
+        // if (language === "en") {
+        //
+        // } else if (language === "ru") {
+        //     window.location.href = "Some_document.html.ru";
+        // }
     }
 
     /**
@@ -74,15 +98,14 @@ export default class Translate {
      * @returns {Translate}
      */
     setLang(lang) {
-        if (!this._options.languages.includes(lang)) {
-            return
-        }
-
-        if (this._options.localStorage) {
+        if (this._options.languages.includes(lang) && this._options.localStorage) {
             localStorage.setItem('language', lang);
         }
+        let url = './i18n/'+lang+'.js'
+        console.log(url)
+        // import * as lang from url
 
-        return this._lang = this.$loadDictionary(lang)
+        // return this._lang = this.$loadDictionary(lang)
     }
 
     /**
@@ -96,12 +119,10 @@ export default class Translate {
 
     _fetch(path) {
         return fetch(path)
-            .then(response => response.json())
+            .then(response => response)
             .catch(error => {
-                console.error(`
-          Could not load "${path}".
-          Please make sure that the file exists.
-        `)
+                console.error(`Could not load "${path}". Check that the file exists.`)
+                console.log(error.message)
             })
     }
 
@@ -112,7 +133,7 @@ export default class Translate {
         }
 
         const translation = await this._fetch(
-            `${this._options.filesLocation}/${language}.json`
+            `${this._options.filesLocation}/${language}.js`
         )
 
         if (!this._cache.has(language)) {
@@ -158,7 +179,7 @@ export default class Translate {
     get defaultConfig() {
         return {
             defaultLang: '',
-            languages: ['rus', 'ukr'],
+            languages: [],
             filesLocation: '/i18n/',
             localStorage: false,
             autoDetectLang: false,
@@ -200,5 +221,4 @@ export default class Translate {
     }
 }
 
-Translate.default = Translate;
-// module.exports = Translate;
+export default Translate
