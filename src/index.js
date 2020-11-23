@@ -15,7 +15,7 @@ const translator = new Translate(config)
 console.log('translator >>>', translator)
 
 
-const langAttr = translator._getHtmlLangAttr()
+const langAttr = translator.getHtmlLangAttr()
 console.log(`DOM tag HTML >>> lang="${langAttr}"`)
 
 

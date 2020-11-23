@@ -18,6 +18,10 @@ class Translate {
                 this.setLang(this._options.defaultLang)
             }
         }
+
+        this._langAttr = document.documentElement.lang ||
+          document.getElementsByTagName('html')[0].getAttribute('xml:lang') ||
+          document.getElementsByTagName('html')[0].getAttribute('lang')
     }
 
     /**
@@ -38,31 +42,52 @@ class Translate {
         return language.slice(0, 2)
     }
 
+    /**
+     * Set language via html tag lang attribute
+     *
+     * @param {String} lang
+     * @private
+     */
     _setHtmlLangAttr(lang) {
-        document.documentElement.setAttribute('lang', lang)
+        document.documentElement.setAttribute('lang', lang) ||
+        document.getElementsByTagName('html')[0].getAttribute('xml:'+lang) ||
+        document.getElementsByTagName('html')[0].getAttribute(lang)
     }
 
-    _getHtmlLangAttr() {
-        const language = document.documentElement.lang
-        console.log('language >>>', language)
+    /**
+     * Get html tag lang attribute value
+     *
+     * @private
+     * @returns {String}
+     */
+    getHtmlLangAttr() {
+        return this._langAttr ?? this._options.defaultLang
+    }
 
+    /**
+     * On switch language behavior
+     *
+     * @param {String} language
+     * @private
+     */
+    _switch (language) {
         switch (language) {
             case 'ru':
                 console.log('switch-case-russian >>>', language)
-            break
+                break
 
             case 'ukr':
                 console.log('switch-case-ukrainian >>>', language)
-            break
+                break
 
             case 'en':
                 console.log('switch-case-english >>>', language)
-            break
+                break
 
             default:
                 console.log('switch-case-default >>>', language)
                 this._setHtmlLangAttr(this._options.defaultLang)
-            break
+                break
         }
     }
 
@@ -96,7 +121,7 @@ class Translate {
      * @param {string} lang
      * @returns {Translate}
      */
-    setLang(lang) {
+    async setLang(lang) {
         if (this._options.languages.includes(lang) && this._options.localStorage) {
             localStorage.setItem('lang', lang);
         }
