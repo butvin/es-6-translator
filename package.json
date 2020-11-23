@@ -1,0 +1,20 @@
+{
+  "name": "es-6-translator",
+  "version": "0.0.1",
+  "description": "The Translator js class",
+  "main": "index.js",
+  "scripts": {
+    "test": "testTranslate"
+  },
+  "repository": {
+    "type": "git",
+    "url": "\"-\""
+  },
+  "keywords": [
+    "ES6",
+    "js",
+    "translator"
+  ],
+  "author": "butvin sergey",
+  "license": "MIT"
+}
