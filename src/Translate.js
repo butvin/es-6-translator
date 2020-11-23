@@ -14,9 +14,7 @@ class Translate {
                 this._options.defaultLanguage = this.detectLang()
             }
 
-            if (this._options.defaultLang &&
-                typeof this._options.defaultLang == 'string'
-            ) {
+            if (typeof this._options.defaultLang === 'string') {
                 this.setLang(this._options.defaultLang)
             }
         }
@@ -28,10 +26,10 @@ class Translate {
      * @returns {string}
      */
     detectLang() {
-        const storedLanguage = localStorage.getItem('language')
+        const isStoredLang = localStorage.getItem('lang')
 
-        if (this._options.localStorage && storedLanguage) {
-            return storedLanguage
+        if (this._options.localStorage && isStoredLang) {
+            return isStoredLang
         }
 
         const language = navigator.languages ?
@@ -40,31 +38,32 @@ class Translate {
         return language.slice(0, 2)
     }
 
-    _detectDocumentLang() {
+    _setHtmlLangAttr(lang) {
+        document.documentElement.setAttribute('lang', lang)
+    }
+
+    _getHtmlLangAttr() {
         const language = document.documentElement.lang
+        console.log('language >>>', language)
 
         switch (language) {
             case 'ru':
-                console.log(language)
+                console.log('switch-case-russian >>>', language)
             break
 
             case 'ukr':
-                console.log(language)
+                console.log('switch-case-ukrainian >>>', language)
             break
 
             case 'en':
-                console.log(language)
+                console.log('switch-case-english >>>', language)
             break
 
             default:
-                console.log(language)
+                console.log('switch-case-default >>>', language)
+                this._setHtmlLangAttr(this._options.defaultLang)
             break
         }
-        // if (language === "en") {
-        //
-        // } else if (language === "ru") {
-        //     window.location.href = "Some_document.html.ru";
-        // }
     }
 
     /**
@@ -99,13 +98,25 @@ class Translate {
      */
     setLang(lang) {
         if (this._options.languages.includes(lang) && this._options.localStorage) {
-            localStorage.setItem('language', lang);
+            localStorage.setItem('lang', lang);
         }
-        let url = './i18n/'+lang+'.js'
-        console.log(url)
-        // import * as lang from url
 
-        // return this._lang = this.$loadDictionary(lang)
+        let path = this._options.filesLocation ?  (this._options.filesLocation + '/') : './'
+        path += (lang + '.js').toString()
+
+        console.log('[setLang()-method scope] path >>>', path)
+
+        const dictionary = import(path)
+          .then(module => {
+              console.log('module >>>', module.default)
+          })
+          .catch(err => {
+              console.log('error >>>', err)
+          })
+
+        console.log('dictionary >>>', dictionary)
+
+        return this._lang = dictionary
     }
 
     /**
@@ -115,6 +126,18 @@ class Translate {
      */
     getLang() {
         return this._lang
+    }
+
+    _import(path) {
+        return import(path)
+            .then(module => module)
+            .catch(error => {
+                console.error(`
+                   >>> Could not load "${path}"
+                   >>> Check that the file exists
+                `)
+                console.log(error.message)
+            })
     }
 
     _fetch(path) {
@@ -153,7 +176,7 @@ class Translate {
     //   document.documentElement.lang = language;
     //
     //   if (this._options.localStorage) {
-    //     localStorage.setItem('language', language);
+    //     localStorage.setItem('lang', language);
     //   }
     // }
 
@@ -180,7 +203,7 @@ class Translate {
         return {
             defaultLang: '',
             languages: [],
-            filesLocation: '/i18n/',
+            filesLocation: '',
             localStorage: false,
             autoDetectLang: false,
         }
