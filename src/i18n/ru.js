@@ -1,4 +1,10 @@
 export default {
-  "key": "ru",
-  "description": "Russian language"
+  key: "ru",
+  title: "Русский",
+  description: "Русский язык",
+  source : {
+    Hello: "Привет",
+    days: "дней",
+    translator: "переводчик"
+  }
 }

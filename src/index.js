@@ -1,7 +1,7 @@
 'use strict'
 import Translate from './Translate.js'
 import * as ru from './i18n/ru.js'
-import * as ukr from './i18n/ukr.js'
+import * as ukr from './i18n/uk.js'
 
 const config = {
     defaultLang: 'ru',
@@ -12,42 +12,20 @@ const config = {
 }
 
 const translator = new Translate(config)
-console.log('translator >>>', translator)
+console.log('translator >>', translator)
 
 
-const langAttr = translator.getHtmlLangAttr()
-console.log(`DOM tag HTML >>> lang="${langAttr}"`)
+const langBeforeLoading = translator.getHtmlLangAttr()
+const langAfterLoaded = translator._langAttr
+
+console.error(`HTML lang attr BEFORE page load >> ${langBeforeLoading}`)
+console.error(`HTML lang attr AFTER page load >>  >> ${langAfterLoaded}`)
 
 
 const rusData = ru.default
 const ukrData = ukr.default
-console.log('[import-manual] rusData >>>', rusData)
-console.log('[import-manual] ukrData >>>', ukrData)
-
-
-
-// console.log('navigator.languages', navigator.languages)
-// console.log(navigator)
-
-
-// translator.setLang('ukr')
-// console.log(translator.getLang())
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// console.log('[import-manual] rusData >>', rusData)
+// console.log('[import-manual] ukrData >>', ukrData)
 
 
 

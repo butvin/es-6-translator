@@ -2,12 +2,16 @@ class Translate {
     /**
      * Translators constructor
      *
-     * @param options
+     * @param {Object} options
      */
     constructor (options = {}) {
+
+        this._htmlNode = document.documentElement || document.getElementsByTagName('html')[0]
+        this._cache = new Map()
+        this._cache.htmlElement = this._htmlNode
+
         if (options instanceof Object) {
             this._options = Object.assign({}, this.defaultConfig, options)
-            this._cache = new Map()
 
             if (this._options.autoDetectLang) {
                 this._lang = this._options.detectLang()
@@ -19,9 +23,7 @@ class Translate {
             }
         }
 
-        this._langAttr = document.documentElement.lang ||
-          document.getElementsByTagName('html')[0].getAttribute('xml:lang') ||
-          document.getElementsByTagName('html')[0].getAttribute('lang')
+        this._langAttr = this.getHtmlLangAttr()
     }
 
     /**
@@ -48,10 +50,8 @@ class Translate {
      * @param {String} lang
      * @private
      */
-    _setHtmlLangAttr(lang) {
-        document.documentElement.setAttribute('lang', lang) ||
-        document.getElementsByTagName('html')[0].getAttribute('xml:'+lang) ||
-        document.getElementsByTagName('html')[0].getAttribute(lang)
+    setHtmlLangAttr(lang) {
+        this._htmlNode.setAttribute('lang', lang) || this._htmlNode.setAttribute('xml:lang', lang)
     }
 
     /**
@@ -61,7 +61,15 @@ class Translate {
      * @returns {String}
      */
     getHtmlLangAttr() {
-        return this._langAttr ?? this._options.defaultLang
+        const h = this._htmlNode;
+
+        const lang = h.hasAttribute('lang') ?
+          h.lang :
+          h.getAttribute('lang') || h.getAttribute('xml:lang')
+
+        this._switch(lang)
+
+        return lang
     }
 
     /**
@@ -73,20 +81,20 @@ class Translate {
     _switch (language) {
         switch (language) {
             case 'ru':
-                console.log('switch-case-russian >>>', language)
+                console.warn('switch-case-russian >>', language)
                 break
 
             case 'ukr':
-                console.log('switch-case-ukrainian >>>', language)
+                console.warn('switch-case-ukrainian >>', language)
                 break
 
             case 'en':
-                console.log('switch-case-english >>>', language)
+                console.warn('switch-case-english >>', language)
                 break
 
             default:
-                console.log('switch-case-default >>>', language)
-                this._setHtmlLangAttr(this._options.defaultLang)
+                console.warn('switch-case-default >>', language)
+                this.setHtmlLangAttr(this._options.defaultLang)
                 break
         }
     }
@@ -126,22 +134,20 @@ class Translate {
             localStorage.setItem('lang', lang);
         }
 
-        let path = this._options.filesLocation ?  (this._options.filesLocation + '/') : './'
+        let path = this._options.filesLocation ? (this._options.filesLocation + '/') : './';
         path += (lang + '.js').toString()
 
-        console.log('[setLang()-method scope] path >>>', path)
-
-        const dictionary = import(path)
+        return this._lang = import(path)
           .then(module => {
-              console.log('module >>>', module.default)
+              console.log('module >>', module.default)
           })
-          .catch(err => {
-              console.log('error >>>', err)
+          .catch(error => {
+              console.log('error >>', error)
           })
 
-        console.log('dictionary >>>', dictionary)
+        // console.log('dictionary >>', dictionary)
 
-        return this._lang = dictionary
+        // return this._lang = dictionary
     }
 
     /**
@@ -174,6 +180,11 @@ class Translate {
             })
     }
 
+    /**
+     *
+     * @param language
+     * @returns {Promise<any|Response|void>}
+     */
     async $loadDictionary(language) {
 
         if (this._cache.has(language)) {
