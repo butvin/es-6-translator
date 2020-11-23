@@ -199,3 +199,6 @@ export default class Translate {
         this._elements.forEach(replace);
     }
 }
+
+Translate.default = Translate;
+// module.exports = Translate;

@@ -1,5 +1,5 @@
-"use strict"
-import Translate from './translator.js';
+'use strict'
+import Translate from './translator.js'
 
 const options = {
     defaultLang: 'ru',
@@ -9,21 +9,28 @@ const options = {
     filesLocation: '/i18n/',
 }
 
-import * as RUS from './i18n/ru.js'
-import * as UKR from './i18n/ukr.js'
-
-const rusData = RUS.default
-console.log(rusData)
-
-const ukrData = UKR.default
-console.log(ukrData)
-
-
 const translator = new Translate(options)
+
+import { RU } from './i18n/ru.js'
+// import * as UKR from './i18n/ukr.js'
+
+const rusData = RU
+console.log(rusData)
+//
+// const ukrData = UKR.default
+// console.log(ukrData)
+
+
 console.log(translator)
 
-translator.setLang('ukr')
-console.log(translator.getLang())
+// translator.setLang('ukr')
+// console.log(translator.getLang())
+
+
+
+
+
+
 
 
 
