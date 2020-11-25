@@ -2,7 +2,7 @@ export default {
   key: "en",
   title: "English",
   description: "English language",
-  source : {
+  data : {
     Hello: 'Hello',
     days: 'days',
     translator: 'translator'

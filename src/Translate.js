@@ -5,53 +5,108 @@ class Translate {
      * @param {Object} options
      */
     constructor (options = {}) {
+        /** Obtain and handle the input options */
+        this._options = Object.assign({}, this.defaultConfig, options)
+        const opt = this._options
 
+        /** Current language at the present */
+        // this._lang
+
+        /** Selector for HTML element @type {HTMLElement|HTMLHtmlElement} */
         this._htmlNode = document.documentElement || document.getElementsByTagName('html')[0]
+
+        /** Init '_cache' property of class @type {Map<any, any>} */
         this._cache = new Map()
-        this._cache.htmlElement = this._htmlNode
 
-        if (options instanceof Object) {
-            this._options = Object.assign({}, this.defaultConfig, options)
+        /** Load default language from config */
+        const defaultLang = this._options.defaultLang
+        console.group('>>>\t[Obtain default language from config] >> '+defaultLang+'\n\n')
+        console.groupEnd()
 
-            if (this._options.autoDetectLang) {
-                this._lang = this._options.detectLang()
-                this._options.defaultLanguage = this.detectLang()
+        if (typeof defaultLang === 'string' && defaultLang.length > 0 &&  this._options.languages.includes(defaultLang)) {
+
+            if (!this._options.languages.includes(defaultLang)) {
+                console.warn('Language '+defaultLang+' not found in ['+this._options.languages+']')
             }
 
-            if (typeof this._options.defaultLang === 'string') {
-                this.setLang(this._options.defaultLang)
-            }
+            this.setLang(defaultLang)
+
+            this._options.autoDetectLang = false
         }
 
-        this._langAttr = this.getHtmlLangAttr()
+
+
+        /** Auto detect language */
+        if (this._options.autoDetectLang && this._options.autoDetectLang === true) {
+            console.log('[Auto detect language] >> ON')
+            this._lang = this.detectLang()
+            this.setLang(this._lang)
+            console.log('[Detected language] >>', this._lang )
+        } else {
+            console.log('[Auto detect language] >> OFF')
+        }
+
+        /** Current value of html lang attribute */
+        this.currentLangAttr
+    }
+
+    // get _lang () {
+    //     // todo
+    // }
+
+    /**
+     * Getter for current value of lang attribute
+     *
+     * @returns {String}
+     */
+    get currentLangAttr () {
+        return this._getHtmlLangAttr()
+    }
+
+    set currentLangAttr (lang) {
+        return this._setHtmlLangAttr(lang)
     }
 
     /**
-     * Get loaded locale at start app
+     * Auto detect language.
+     *
+     * Is executed ONLY IF input option:
+     *
+     *  - has not exist or missing 'defaultLanguage' parameter
+     *
+     *  - 'defaultLanguage' parameters value is 'false' or empty
+     *
+     *  - parameter 'autoDetectLang' is present and it's value equal 'true'
      *
      * @returns {string}
      */
     detectLang() {
-        const isStoredLang = localStorage.getItem('lang')
 
-        if (this._options.localStorage && isStoredLang) {
-            return isStoredLang
+        if (this._options.autoDetectLang === false) {
+            console.error('Parameter "autoDetectLang"')
         }
 
-        const language = navigator.languages ?
-            navigator.languages[0] : navigator.language;
+        if (this._options.localStorage && localStorage.getItem('lang')) {
+            return localStorage.getItem('lang')
+        }
 
-        return language.slice(0, 2)
+        let locale = navigator.languages ? navigator.languages[0] : navigator.language;
+
+        return locale.slice(0, 2)
     }
 
     /**
-     * Set language via html tag lang attribute
+     * Set lang attribute value to HTML element
      *
      * @param {String} lang
      * @private
      */
-    setHtmlLangAttr(lang) {
-        this._htmlNode.setAttribute('lang', lang) || this._htmlNode.setAttribute('xml:lang', lang)
+    _setHtmlLangAttr(lang) {
+        if (this._htmlNode.hasAttribute('lang') || this._htmlNode.hasAttribute('xml:lang')) {
+            this._htmlNode.setAttribute('lang', lang)
+        } else {
+            console.error('>>>\t[HTML element has no property "xml:lang" || "lang"]')
+        }
     }
 
     /**
@@ -60,16 +115,20 @@ class Translate {
      * @private
      * @returns {String}
      */
-    getHtmlLangAttr() {
-        const h = this._htmlNode;
+    _getHtmlLangAttr() {
+        let isEexistLangAttr =
+            this._htmlNode.hasAttribute('lang') ||
+            this._htmlNode.hasAttribute('xml:lang');
 
-        const lang = h.hasAttribute('lang') ?
-          h.lang :
-          h.getAttribute('lang') || h.getAttribute('xml:lang')
-
-        this._switch(lang)
-
-        return lang
+        if (isEexistLangAttr) {
+            return (
+                this._htmlNode.lang ||
+                this._htmlNode.getAttribute('lang') ||
+                this._htmlNode.getAttribute('xml:lang')
+            )
+        } else {
+            console.error('[HTML element without attribute "xml:lang" or "lang"]')
+        }
     }
 
     /**
@@ -82,19 +141,22 @@ class Translate {
         switch (language) {
             case 'ru':
                 console.warn('switch-case-russian >>', language)
+                this._setHtmlLangAttr(language)
                 break
 
             case 'ukr':
                 console.warn('switch-case-ukrainian >>', language)
+                this._setHtmlLangAttr(language)
                 break
 
             case 'en':
                 console.warn('switch-case-english >>', language)
+                this._setHtmlLangAttr(language)
                 break
 
             default:
                 console.warn('switch-case-default >>', language)
-                this.setHtmlLangAttr(this._options.defaultLang)
+                this._setHtmlLangAttr(language)
                 break
         }
     }
@@ -124,30 +186,46 @@ class Translate {
     }
 
     /**
-     * Current locale
+     * Obtain path to dictionary depended by language argument
+     *
+     * @param {String} lang
+     * @private
+     */
+    _getPath(lang) {
+        let path = (this._options.filesLocation ? (this._options.filesLocation + '/') : './') + lang + '.js';
+
+        return path.toString()
+    }
+
+    /**
+     * Set specific language
      *
      * @param {string} lang
      * @returns {Translate}
      */
     async setLang(lang) {
-        if (this._options.languages.includes(lang) && this._options.localStorage) {
-            localStorage.setItem('lang', lang);
+
+        // localStorage.clear();
+
+        const path = this._getPath(lang)
+
+        const loaded = await this._import(path)
+
+        if (loaded) {
+            this._setHtmlLangAttr(lang)
+
+            if (this._options.localStorage === true) {
+                localStorage.setItem('lang', lang)
+                localStorage.setItem('loaded', JSON.stringify(loaded))
+            }
+
+            console.group('\n>>>\t\t[Loaded language] >> '+lang+'\n>>>\t\t[Dynamically imported and stored] >>', JSON.parse(JSON.stringify(loaded)))
+            console.groupEnd()
+
+            // todo: this._lang = loaded
+
+            return loaded
         }
-
-        let path = this._options.filesLocation ? (this._options.filesLocation + '/') : './';
-        path += (lang + '.js').toString()
-
-        return this._lang = import(path)
-          .then(module => {
-              console.log('module >>', module.default)
-          })
-          .catch(error => {
-              console.log('error >>', error)
-          })
-
-        // console.log('dictionary >>', dictionary)
-
-        // return this._lang = dictionary
     }
 
     /**
@@ -159,24 +237,39 @@ class Translate {
         return this._lang
     }
 
+    /**
+     * Dynamically language importing
+     *
+     * @param {string} path
+     * @returns {Promise<* | void>}
+     * @private
+     */
     _import(path) {
         return import(path)
-            .then(module => module)
+            .then(dictionary => dictionary.default)
             .catch(error => {
                 console.error(`
-                   >>> Could not load "${path}"
-                   >>> Check that the file exists
+                   >>> Could not load "${path}". Check the file exists.
+                   >>> Error: [${error.message}]
                 `)
-                console.log(error.message)
             })
     }
 
+    /**
+     * Fetch data from file by path
+     *
+     * @param {String} path
+     * @returns {Promise<* | void>}
+     * @private
+     */
     _fetch(path) {
         return fetch(path)
             .then(response => response)
             .catch(error => {
-                console.error(`Could not load "${path}". Check that the file exists.`)
-                console.log(error.message)
+                console.error(`
+                   >>> Could not load "${path}". Check the file exists.
+                   >>> Error: [${error.message}]
+                `)
             })
     }
 
@@ -233,7 +326,7 @@ class Translate {
     }
 
     /**
-     * The defaultConfig property getter
+     * The default configuration getter
      */
     get defaultConfig() {
         return {
@@ -241,7 +334,7 @@ class Translate {
             languages: [],
             filesLocation: '',
             localStorage: false,
-            autoDetectLang: false,
+            autoDetectLang: true,
         }
     }
 

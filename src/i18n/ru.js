@@ -2,7 +2,7 @@ export default {
   key: "ru",
   title: "Русский",
   description: "Русский язык",
-  source : {
+  data : {
     Hello: "Привет",
     days: "дней",
     translator: "переводчик"

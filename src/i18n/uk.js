@@ -2,7 +2,7 @@ export default {
   key: "uk",
   title: "Українська",
   description: "Українська мова",
-  source : {
+  data : {
     Hello: "Привіт",
     days: "днів",
     translator: "перекладач"

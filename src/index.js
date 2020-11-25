@@ -1,31 +1,37 @@
 'use strict'
-import Translate from './Translate.js'
-import * as ru from './i18n/ru.js'
-import * as ukr from './i18n/uk.js'
 
-const config = {
-    defaultLang: 'ru',
-    languages: ['ru', 'ukr'],
+console.time('timer')
+console.timeStamp('timer')
+
+/**
+ * JSON specifications:
+ * @link https://www.ecma-international.org/ecma-262/6.0/#sec-json-object
+ *
+ * js map: Map([iterable])
+ * @link https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Map
+ *
+ * CONSOLE API
+ * @link https://developer.mozilla.org/ru/docs/Web/API/Console
+ */
+
+import Translate from './Translate.js'
+
+const options = {
+    defaultLang: 'ru', // lang="en"
+    languages: ['ru', 'uk', 'en'],
     localStorage: true,
     autoDetectLang: false,
     filesLocation: './i18n',
 }
 
-const translator = new Translate(config)
-console.log('translator >>', translator)
+const t = new Translate(options)
+// console.log('translator >>', t)
 
+const langStart = t.currentLangAttr
+console.log('Lang attribute on loading >>', langStart)
 
-const langBeforeLoading = translator.getHtmlLangAttr()
-const langAfterLoaded = translator._langAttr
-
-console.error(`HTML lang attr BEFORE page load >> ${langBeforeLoading}`)
-console.error(`HTML lang attr AFTER page load >>  >> ${langAfterLoaded}`)
-
-
-const rusData = ru.default
-const ukrData = ukr.default
-// console.log('[import-manual] rusData >>', rusData)
-// console.log('[import-manual] ukrData >>', ukrData)
+const langFinish = t.getLang()
+console.log('Lang attribute on ready >>', langFinish)
 
 
 
@@ -36,6 +42,26 @@ const ukrData = ukr.default
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+// testing
+// for (let i = 0; i < 5; i++) {
+//     console.error('[%s]This is %s call',
+//       new Date().toLocaleTimeString(),
+//       i+1
+//     )
+// }
 
 
 
@@ -141,3 +167,5 @@ const ukrData = ukr.default
 //     }
 //     return out;
 // }
+
+console.timeEnd('timer')
