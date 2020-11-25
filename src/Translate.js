@@ -34,8 +34,6 @@ class Translate {
             this._options.autoDetectLang = false
         }
 
-
-
         /** Auto detect language */
         if (this._options.autoDetectLang && this._options.autoDetectLang === true) {
             console.log('[Auto detect language] >> ON')
@@ -70,29 +68,23 @@ class Translate {
     /**
      * Auto detect language.
      *
-     * Is executed ONLY IF input option:
-     *
-     *  - has not exist or missing 'defaultLanguage' parameter
-     *
-     *  - 'defaultLanguage' parameters value is 'false' or empty
-     *
-     *  - parameter 'autoDetectLang' is present and it's value equal 'true'
-     *
      * @returns {string}
      */
     detectLang() {
 
-        if (this._options.autoDetectLang === false) {
-            console.error('Parameter "autoDetectLang"')
+        const langAttr = this._getHtmlLangAttr()
+        const isStoredLang = localStorage.getItem('lang')
+
+        if (langAttr && typeof langAttr === 'string') {
+            return langAttr
         }
-
-        if (this._options.localStorage && localStorage.getItem('lang')) {
-            return localStorage.getItem('lang')
+        else if (this._options.localStorage && isStoredLang) {
+            return isStoredLang
         }
-
-        let locale = navigator.languages ? navigator.languages[0] : navigator.language;
-
-        return locale.slice(0, 2)
+        else {
+            let localeLang = navigator.languages ? navigator.languages[0] : navigator.language;
+            return localeLang.slice(0, 2)
+        }
     }
 
     /**
@@ -223,6 +215,7 @@ class Translate {
             console.groupEnd()
 
             // todo: this._lang = loaded
+            this._lang = lang
 
             return loaded
         }

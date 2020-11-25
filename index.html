@@ -4,11 +4,137 @@
         <title>Translator</title>
         <meta charset="UTF-8" />
         <link rel="shortcut icon" href="#">
+        <style>
+            html {
+                height: 100%;
+            }
+            body {
+                min-height: 100vh;
+                background: #fffcf0;
+                overflow: hidden;
+                height: 100%;
+            }
+            @font-face {
+                font-family: 'Decovar Regular24';
+                src:url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/209981/Decovar-VF.ttf');
+            }
+            p {
+                margin: 0;
+                font-size: 3vw;
+                font-family: 'Decovar Regular24', sans-serif;
+                color: #6a60a9;
+                font-variation-settings: 'SSTR' 1000;
+                animation: loading 2750ms infinite linear;
+            }
+            @keyframes loading {
+                0% {
+                    font-variation-settings: 'SSTR' 1000;
+                }
+                50% {
+                    font-variation-settings: 'SSTR' 0;
+                }
+            }
+            p {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                transform: translateZ(0);
+                backface-visibility: hidden;
+                /*max-width: 25vw;*/
+                text-shadow:
+                        -1px -1px 0 rgba(255, 255, 255, .7),
+                        1px -1px 0 rgba(255, 255, 255, .7),
+                        -1px 1px 0 rgba(255, 255, 255, .7),
+                        1px 1px 0 rgba(255, 255, 255, .7),
+                        -1px 2px 1px #a0a0a0,
+                        -2px 4px 2px #a0a0a0,
+                        -3px 6px 3px rgba(255, 255, 255, 0.6),
+                        -4px 8px 4px rgba(255, 255, 255, 0.5),
+                        -5px 10px 5px rgba(255, 255, 255, 0.4),
+                        -6px 12px 6px rgba(255, 255, 255, 0.3),
+                        -7px 13px 7px rgba(255, 255, 255, 0.2),
+                        -8px 15px 8px rgba(255, 255, 255, 0.2),
+                        -9px 17px 9px rgba(255, 255, 255, 0.2),
+                        -10px 19px 10px rgba(255, 255, 255, 0.2),
+                        -11px 20px 11px rgba(255, 255, 255, 0.1),
+                        -12px 22px 12px rgba(255, 255, 255, 0.1),
+                        -13px 24px 13px rgba(255, 255, 255, 0.1),
+                        -14px 26px 14px rgba(255, 255, 255, 0.1),
+                        -15px 28px 15px rgba(255, 255, 255, 0.1),
+                        -16px 30px 16px rgba(255, 255, 255, 0.1),
+                        -17px 32px 17px rgba(255, 255, 255, 0.1),
+                        -18px 34px 18px rgba(255, 255, 255, 0.1),
+                        -19px 36px 19px rgba(255, 255, 255, 0.1),
+                        -20px 38px 20px rgba(255, 255, 255, 0.1),
+                        -21px 39px 21px rgba(255, 255, 255, 0.1);
+            }
+            .container {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 4vh;
+            }
+
+            .loader {
+                max-width: 25vw;
+                width: 100%;
+                height: auto;
+                stroke-linecap: round;
+            }
+
+            circle {
+                fill: none;
+                stroke-width: 4;
+                animation-name: preloader;
+                animation-duration: 2.75s;
+                animation-iteration-count: infinite;
+                animation-timing-function: ease-in-out;
+                transform-origin: 170px 170px;
+                will-change: transform;
+                text-shadow: 1px 1px 0 rgba(255, 255, 255, .7)
+            }
+            circle:nth-of-type(1) {
+                stroke-dasharray: 550px;
+                animation-delay: 0.15s;
+             }
+
+            circle:nth-of-type(2) {
+                 stroke-dasharray: 500px;
+                animation-delay: 0.3s;
+             }
+
+            circle:nth-of-type(3) {
+                 stroke-dasharray: 450px;
+                animation-delay: 0.45s;
+             }
+
+            circle:nth-of-type(4) {
+                stroke-dasharray: 300px;
+                animation-delay: 0.6s;
+            }
+            @keyframes preloader {
+                50% {
+                    transform: rotate(360deg);
+                }
+            }
+        </style>
     </head>
     <body>
         <main id="app">
             <div class="translator-module-area">
-                <p class="module-title"><i>[translator]</i></p>
+                <p class="module-title">[translator]</p>
+                <div class="container">
+
+                    <svg class="loader" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 340">
+                        <circle cx="170" cy="170" r="160" stroke="#EFDC05"/>
+                        <circle cx="170" cy="170" r="135" stroke="#6a60a9"/>
+                        <circle cx="170" cy="170" r="110" stroke="#EFDC05"/>
+                        <circle cx="170" cy="170" r="85" stroke="#6a60a9"/>
+                    </svg>
+
+                </div>
+<!--                <p class="module-output">[result]</p>-->
             </div>
         </main>
         <script type="module" src="src/index.js"></script>

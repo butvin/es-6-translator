@@ -1,8 +1,5 @@
 'use strict'
 
-console.time('timer')
-console.timeStamp('timer')
-
 /**
  * JSON specifications:
  * @link https://www.ecma-international.org/ecma-262/6.0/#sec-json-object
@@ -14,7 +11,17 @@ console.timeStamp('timer')
  * @link https://developer.mozilla.org/ru/docs/Web/API/Console
  */
 
-import Translate from './Translate.js'
+console.time('timer')
+console.timeStamp('timer')
+
+
+function log(message, arg) {
+
+    // if (arg instanceof Object) JSON.parse((arg))
+
+    console.group('\n[Logger] >>>\t\t['+message.toString()+'] >> ', arg)
+    console.groupEnd()
+}
 
 const options = {
     defaultLang: 'ru', // lang="en"
@@ -24,24 +31,44 @@ const options = {
     filesLocation: './i18n',
 }
 
-const t = new Translate(options)
-// console.log('translator >>', t)
+/** @class {Translate} Translate */
+import Translate from './Translate.js'
 
-const langStart = t.currentLangAttr
-console.log('Lang attribute on loading >>', langStart)
+const _t = new Translate(options)
+log('_t <Translate>', _t)
 
-const langFinish = t.getLang()
-console.log('Lang attribute on ready >>', langFinish)
+const langStart = _t.currentLangAttr
+console.log('>>>\tLang attribute on loading >> '+langStart)
+
+const langFinish = _t.getLang()
+console.log('>>>\tLang attribute on ready >> '+langFinish)
+
+/**
+ * Copy object
+ *
+ * @param {object} obj
+ * @returns {{}}
+ */
+function cp(obj) {
+    let copyObj = {}
+    let key
+
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            copyObj[key] = obj[key]
+        }
+    }
+
+    return copyObj
+}
 
 
 
+const p = document.querySelector("p");
 
-
-
-
-
-
-
+p.addEventListener('input', function() {
+    this.setAttribute("data-heading", this.innerText);
+});
 
 
 
